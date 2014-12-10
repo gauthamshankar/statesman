@@ -11,6 +11,11 @@ module Statesman
              "statesman/adapters/active_record_transition"
     autoload :ActiveRecordQueries,
              "statesman/adapters/active_record_queries"
+    autoload :ActiveRecordEnum,   "statesman/adapters/active_record_enum"
+    autoload :ActiveRecordEnumTransition,
+             "statesman/adapters/active_record_enum_transition"
+    autoload :ActiveRecordEnumQueries,
+             "statesman/adapters/active_record_enum_queries"
     autoload :Mongoid,      "statesman/adapters/mongoid"
     autoload :MongoidTransition,
              "statesman/adapters/mongoid_transition"
