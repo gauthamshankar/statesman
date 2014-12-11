@@ -13,7 +13,7 @@ module Statesman
         # forgot to run migration ? or maybe use the generator ?
         raise EnumColumnNotFoundError, 
               "Cannot find the enum column" if
-              column_name.blank? || parent_model.class.columns_hash[column_name].blank?
+              parent_model.class.columns_hash[column_name].blank?
 
         raise IncompatibleEnumColumnTypeError, 
               "Enum column should be of type int(11)" unless
@@ -27,13 +27,26 @@ module Statesman
       end
 
       def create(from, to, metadata = {})
-        # do we need to convert to string ?kj:w
+        # do we need to convert to string? 
         from = from.to_s
         to = to.to_s
         create_transition(from, to, metadata)
       end
 
-      # should this be private ?
+      def last
+        # please use better conditionals ?
+        if @history.blank? && 
+          parent_model.send(transition_class.enum_column).present?
+          load_history
+        else
+          # should we cache the result ? won't it be too much
+          # complexitiy
+          @history.sort_by(&:sort_key).last
+        end
+      end
+
+      private
+
       def create_transition(from, to, metadata)
         transition = transition_class.new(to, next_sort_key, metadata)
 
@@ -51,6 +64,7 @@ module Statesman
           # that someone already updated it or rather some process
           # should we throw an error for it ?
           parent_model.save!
+          # not very happy about this. results in failing specs
           @history << transition
           @observer.execute(:after, from, to, transition)
         end
@@ -58,18 +72,6 @@ module Statesman
 
         transition
       end
-
-      def last
-        # please use better conditionals ?
-        if @history.blank? && 
-          parent_model.send(transition_class.enum_column).present?
-          load_history
-        else
-          @history.sort_by(&:sort_key).last
-        end
-      end
-
-      private
 
       def next_sort_key
         (last && last.sort_key + 10) || 0
@@ -79,6 +81,8 @@ module Statesman
         state_name = transition_class.state_for_enum(
           parent_model.send(transition_class.enum_column)
         ).to_s
+
+        # should there be a state not found for enum error ?
 
         transition = transition_class.new(
           state_name,
