@@ -140,5 +140,53 @@ describe Statesman::Adapters::ActiveRecordEnum do
       end
     end
 
+    describe "#last" do
+      let(:adapter) do
+        described_class.new(EnumActiveRecordTransition, model, observer)
+      end
+
+      before do
+        temp_adapter = described_class.new(EnumActiveRecordTransition, model, observer)
+        temp_adapter.create(:x, :y)
+      end
+
+      context "with persisted data but no history in memory" do
+        it "retrieves the new transition from the model" do
+          expect(adapter).to receive(:load_history)
+          adapter.last
+        end
+
+        it "returns persisted transition" do
+          expect(adapter.last.to_state).to eql("y")
+        end 
+      end
+
+      context "model has no state data (initial state)" do
+        it "returns nil for last transition" do
+          new_model = EnumActiveRecordModel.create
+          new_adapter = described_class.new(EnumActiveRecordTransition,
+                                            new_model, observer)
+          expect(new_adapter.last).to be_nil
+        end
+      end
+
+      context "with a pre-fetched transition history" do
+        before do
+          adapter.last
+        end
+
+        it "does not load again if data is pre-fetched" do
+          expect(adapter).not_to receive(:load_history)
+          adapter.last
+        end
+
+        it "returns last transition from history" do
+          adapter.create(:y, :x)
+          expect(adapter).not_to receive(:load_history)
+          expect(adapter.last.to_state).to eql("x")
+        end
+      end
+    end
+
   end
 end

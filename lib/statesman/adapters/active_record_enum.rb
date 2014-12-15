@@ -33,6 +33,7 @@ module Statesman
         create_transition(from, to, metadata)
       end
 
+      # not very convinved with the way last works
       def last
         # please use better conditionals ?
         if @history.blank? && 

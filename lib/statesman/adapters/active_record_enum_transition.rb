@@ -44,6 +44,9 @@ module Statesman
           @enum_state[enum]
         end
 
+        # why only these two errors are being raised from here
+        # why not when the state is not found when asking for
+        # enum_for_state or state_for_enum
         def validate_enum_map
           # Enum itself is a datatype, please change the message
           raise InvalidEnumError, "Enum can only be of type integer" unless
