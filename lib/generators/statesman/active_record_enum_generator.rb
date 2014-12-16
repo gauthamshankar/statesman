@@ -11,7 +11,7 @@ module Statesman
     argument :parent,       type: :string, desc: "Your parent model name"
     argument :klass,        type: :string, desc: "Your transition model name"
     argument :column_name,  type: :string, desc: "Enum column name for parent",
-      :default => "enum_state"
+                            default: "enum_state"
 
     source_root File.expand_path('../templates', __FILE__)
 
@@ -24,7 +24,8 @@ module Statesman
 
     def migration_file_name
       # remove generic table name from generator helpers
-      "db/migrate/#{next_migration_number}_add_statesman_to_#{parent_name.pluralize}.rb"
+      "db/migrate/#{next_migration_number}_add_statesman_to_" \
+      "#{parent_name.pluralize}.rb"
     end
   end
 end

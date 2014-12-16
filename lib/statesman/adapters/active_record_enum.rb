@@ -9,15 +9,16 @@ module Statesman
 
       def initialize(transition_class, parent_model, observer)
         column_name = transition_class.enum_column.to_s
+        parent_class = parent_model.class
 
         # forgot to run migration ? or maybe use the generator ?
-        raise EnumColumnNotFoundError, 
+        raise EnumColumnNotFoundError,
               "Cannot find the enum column" if
-              parent_model.class.columns_hash[column_name].blank?
+              parent_class.columns_hash[column_name].blank?
 
-        raise IncompatibleEnumColumnTypeError, 
+        raise IncompatibleEnumColumnTypeError,
               "Enum column should be of type int(11)" unless
-              parent_model.class.columns_hash[column_name].sql_type.eql?("integer")
+              parent_class.columns_hash[column_name].type.eql?(:integer)
 
         @history = []
         @transition_class = transition_class
@@ -27,7 +28,7 @@ module Statesman
       end
 
       def create(from, to, metadata = {})
-        # do we need to convert to string? 
+        # do we need to convert to string?
         from = from.to_s
         to = to.to_s
         create_transition(from, to, metadata)
@@ -36,8 +37,8 @@ module Statesman
       # not very convinved with the way last works
       def last
         # please use better conditionals ?
-        if @history.blank? && 
-          parent_model.send(transition_class.enum_column).present?
+        if @history.blank? &&
+           parent_model.send(transition_class.enum_column).present?
           load_history
         else
           # should we cache the result ? won't it be too much
@@ -56,7 +57,7 @@ module Statesman
         raise MissingEnumForStateError if enum.blank?
 
         parent_model.send(
-          "#{transition_class.enum_column.to_s}=", enum
+          "#{transition_class.enum_column}=", enum
         )
 
         ::ActiveRecord::Base.transaction do

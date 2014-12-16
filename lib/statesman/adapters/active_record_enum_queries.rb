@@ -7,7 +7,7 @@ module Statesman
 
       module ClassMethods
         def in_state(*states)
-          where(state_inclusion_where(states), 
+          where(state_inclusion_where(states),
                 states.map { |state| transition_class.enum_for_state(state) })
           # raise error ?
         end

@@ -4,7 +4,7 @@ require "statesman/adapters/active_record_enum_transition"
 require "statesman/adapters/active_record_enum_exceptions"
 
 describe Statesman::Adapters::ActiveRecordEnum do
-  let(:states_as_enum) { { :x => 1, :y => 2, :z => 3 } }
+  let(:states_as_enum) { { x: 1, y: 2, z: 3 } }
   let(:enums_as_state) { states_as_enum.invert }
 
   before do
@@ -24,10 +24,9 @@ describe Statesman::Adapters::ActiveRecordEnum do
     result
   end
 
-
   let(:model) { EnumActiveRecordModel.create }
   it_behaves_like "an adapter", described_class,
-    EnumActiveRecordTransition
+                  EnumActiveRecordTransition
 
   describe "#initialize" do
     context "specified enum column is not present in model" do
@@ -49,8 +48,8 @@ describe Statesman::Adapters::ActiveRecordEnum do
       before do
         model
         enum_column = double
-        allow(enum_column).to receive_messages(sql_type: '')
-        allow(EnumActiveRecordModel).to receive_messages(columns_hash: 
+        allow(enum_column).to receive_messages(type: :string)
+        allow(EnumActiveRecordModel).to receive_messages(columns_hash:
                                         { 'enum_state' => enum_column })
       end
 
@@ -58,7 +57,8 @@ describe Statesman::Adapters::ActiveRecordEnum do
         expect do
           described_class.new(EnumActiveRecordTransition,
                               model, observer)
-        end.to raise_exception(Statesman::Adapters::IncompatibleEnumColumnTypeError)
+        end.to raise_exception(
+          Statesman::Adapters::IncompatibleEnumColumnTypeError)
       end
     end
 
@@ -74,8 +74,10 @@ describe Statesman::Adapters::ActiveRecordEnum do
 
       context "when state does not have an associated enum" do
         let(:states_as_enum) { {} }
-        it { is_expected.to raise_exception(
-            Statesman::Adapters::MissingEnumForStateError) }
+        it do
+          is_expected.to raise_exception(
+            Statesman::Adapters::MissingEnumForStateError)
+        end
       end
 
       context "with no previous transition, i.e enum_state is nil" do
@@ -88,7 +90,8 @@ describe Statesman::Adapters::ActiveRecordEnum do
         end
       end
 
-      context "parent model with a previous transition, i.e enum_state has value" do
+      context "parent model with a previous transition," \
+        "i.e enum_state has value" do
         subject { model }
         before do
           adapter.create(from, to)
@@ -110,11 +113,12 @@ describe Statesman::Adapters::ActiveRecordEnum do
         context "model save raises an exception" do
           before do
             allow_any_instance_of(EnumActiveRecordModel)
-             .to receive(:save!).and_raise(StandardError)
+              .to receive(:save!).and_raise(StandardError)
           end
 
           it "rollback's the model data" do
-            expect{ adapter.create(from, to) }.to raise_exception(StandardError)
+            expect { adapter.create(from, to) }
+              .to raise_exception(StandardError)
             model.reload
             expect(model.enum_state).to eq(1)
           end
@@ -132,7 +136,8 @@ describe Statesman::Adapters::ActiveRecordEnum do
           end
 
           it "rollback's the model data" do
-            expect { adapter.create(from, to) }.to raise_exception(StandardError)
+            expect { adapter.create(from, to) }
+              .to raise_exception(StandardError)
             model.reload
             expect(model.enum_state).to eql(1)
           end
@@ -146,7 +151,8 @@ describe Statesman::Adapters::ActiveRecordEnum do
       end
 
       before do
-        temp_adapter = described_class.new(EnumActiveRecordTransition, model, observer)
+        temp_adapter = described_class.new(EnumActiveRecordTransition, model,
+                                           observer)
         temp_adapter.create(:x, :y)
       end
 
@@ -158,7 +164,7 @@ describe Statesman::Adapters::ActiveRecordEnum do
 
         it "returns persisted transition" do
           expect(adapter.last.to_state).to eql("y")
-        end 
+        end
       end
 
       context "model has no state data (initial state)" do

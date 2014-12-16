@@ -21,9 +21,9 @@ end
 class EnumActiveRecordTransition
   include Statesman::Adapters::ActiveRecordEnumTransition
 
-  states_as_enum :initial => 1,
-    :succeeded => 2,
-    :failed => 3
+  states_as_enum initial:   1,
+                 succeeded: 2,
+                 failed:    3
 end
 
 class CreateEnumActiveRecordMigration < ActiveRecord::Migration

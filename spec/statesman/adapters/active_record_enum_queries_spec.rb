@@ -6,7 +6,8 @@ describe Statesman::Adapters::ActiveRecordEnumQueries do
   end
 
   before do
-    EnumActiveRecordModel.send(:include, Statesman::Adapters::ActiveRecordEnumQueries)
+    EnumActiveRecordModel.send(:include,
+                               Statesman::Adapters::ActiveRecordEnumQueries)
     EnumActiveRecordModel.class_eval do
       def self.transition_class
         EnumActiveRecordTransition
