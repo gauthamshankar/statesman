@@ -9,11 +9,15 @@ module Statesman
     end
 
     def enum_lib_file_name
-      "lib/statesman/#{klass.underscore}.rb"
+      "lib/#{klass.underscore}.rb"
     end
 
     def migration_class_name
       klass.gsub(/::/, '').pluralize
+    end
+
+    def enum_migration_class_name
+      parent.gsub(/::/, '').pluralize
     end
 
     def next_migration_number

@@ -27,7 +27,8 @@ describe Statesman::ActiveRecordEnumGenerator, type: :generator do
         run_generator %w(Yummy::Bacon Yummy::BaconTransition)
       end
 
-      it { is_expected.to contain(/:bacon/) }
+      it { is_expected.to contain(/:bacons/) }
+      it { is_expected.to contain(/class AddStatesmanToYummyBacons/) }
       it { is_expected.to contain(/:enum_state/) }
     end
 
@@ -37,14 +38,15 @@ describe Statesman::ActiveRecordEnumGenerator, type: :generator do
         run_generator %w(Yummy::Bacon Yummy::BaconTransition bacon_state)
       end
 
-      it { is_expected.to contain(/:bacon/) }
+      it { is_expected.to contain(/:bacons/) }
+      it { is_expected.to contain(/class AddStatesmanToYummyBacons/) }
       it { is_expected.to contain(/:bacon_state/) }
     end
   end
 
   describe 'properly adds class names' do
     before { run_generator %w(Yummy::Bacon Yummy::BaconTransition) }
-    subject { file('lib/statesman/yummy/bacon_transition.rb') }
+    subject { file('lib/yummy/bacon_transition.rb') }
 
     it { is_expected.to contain(/class Yummy::BaconTransition/) }
     it { is_expected.to contain(/state_column :enum_state/) }
@@ -52,7 +54,7 @@ describe Statesman::ActiveRecordEnumGenerator, type: :generator do
 
   describe 'properly formats without class names' do
     before { run_generator %w(Bacon BaconTransition) }
-    subject { file('lib/statesman/bacon_transition.rb') }
+    subject { file('lib/bacon_transition.rb') }
 
     it { is_expected.to contain(/class BaconTransition/) }
     it { is_expected.to contain(/state_column :enum_state/) }
@@ -60,7 +62,7 @@ describe Statesman::ActiveRecordEnumGenerator, type: :generator do
 
   describe 'properly adds column name' do
     before { run_generator %w(Bacon BaconTransition bacon_state) }
-    subject { file('lib/statesman/bacon_transition.rb') }
+    subject { file('lib/bacon_transition.rb') }
 
     it { is_expected.to contain(/state_column :bacon_state/) }
   end
