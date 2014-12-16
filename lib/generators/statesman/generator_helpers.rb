@@ -8,6 +8,10 @@ module Statesman
       "app/models/#{klass.underscore}.rb"
     end
 
+    def enum_lib_file_name
+      "lib/statesman/#{klass.underscore}.rb"
+    end
+
     def migration_class_name
       klass.gsub(/::/, '').pluralize
     end
