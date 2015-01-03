@@ -1,0 +1,5 @@
+class AddStatesmanTo<%= enum_migration_class_name %> < ActiveRecord::Migration
+  def change
+    add_column :<%= parent_name.pluralize %>, :<%= column_name %>, :integer
+  end
+end

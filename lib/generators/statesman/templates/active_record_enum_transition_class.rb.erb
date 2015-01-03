@@ -1,0 +1,5 @@
+class <%= klass %>
+  include Statesman::Adapters::ActiveRecordEnumTransition
+
+  state_column :<%= column_name %>
+end

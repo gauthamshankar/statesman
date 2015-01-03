@@ -2,6 +2,9 @@ require "statesman"
 require "sqlite3"
 require "active_record"
 require "support/active_record"
+# db property, can you abstract out the active record
+# common support into another file ?
+require "support/active_record_enum"
 require "mongoid"
 require 'rspec/its'
 
@@ -39,6 +42,12 @@ RSpec.configure do |config|
     def prepare_model_table
       silence_stream(STDOUT) do
         CreateMyActiveRecordModelMigration.migrate(:up)
+      end
+    end
+
+    def prepare_enum_model_table
+      silence_stream(STDOUT) do
+        CreateEnumActiveRecordMigration.migrate(:up)
       end
     end
 
